@@ -13,6 +13,9 @@ export function validateTitle(value: string): ValidationResult<string> {
   return { ok: true, value: trimmed };
 }
 
+/** Hard ceiling in major units. High enough for real gifts, low enough to reject impractical prices. */
+const MAX_PRICE_MAJOR = 1_000_000;
+
 export function parsePriceMajorInput(value: string): number | null {
   const normalized = value.trim().replace(",", ".");
   if (!normalized) return null;
@@ -28,6 +31,9 @@ export function validatePriceInput(value: string): ValidationResult<number> {
   }
   if (major <= 0) {
     return { ok: false, error: "Price must be greater than zero" };
+  }
+  if (major > MAX_PRICE_MAJOR) {
+    return { ok: false, error: "Price must be 1.000.000 or less" };
   }
   const priceMinor = Math.round(major * 100);
   if (priceMinor < 1) {

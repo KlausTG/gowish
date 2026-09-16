@@ -6,7 +6,7 @@ export const Colors = {
     text: "#000000",
     background: "#ffffff",
     backgroundElement: "#F0F0F3",
-    backgroundSelected: "#E0E1E6",
+    backgroundSelected: "#c2ddff",
     textSecondary: "#60646C",
     accent: "#4397FF", // Brand color
     accentOnSurface: "#E6F4FE",
@@ -21,7 +21,7 @@ export const Colors = {
     text: "#ffffff",
     background: "#000000",
     backgroundElement: "#212225",
-    backgroundSelected: "#2E3135",
+    backgroundSelected: "#002e66",
     textSecondary: "#B0B4BA",
     accent: "#4397FF",
     accentOnSurface: "#0D2847",

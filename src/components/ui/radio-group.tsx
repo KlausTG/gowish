@@ -36,9 +36,11 @@ export function RadioGroup<T extends string>({
             style={({ pressed }) => [
               styles.row,
               {
-                backgroundColor: theme.backgroundElement,
+                backgroundColor: selected
+                  ? theme.backgroundSelected
+                  : theme.backgroundElement,
                 borderColor: selected ? theme.accent : theme.border,
-                opacity: pressed ? 0.85 : 1,
+                opacity: pressed ? 0.75 : 1,
               },
             ]}
           >

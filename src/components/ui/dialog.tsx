@@ -52,7 +52,11 @@ export function Dialog({ visible, title, onClose, children }: DialogProps) {
           onPress={onClose}
         />
         <Animated.View
-          entering={FadeInDown.springify().damping(18)}
+          entering={FadeInDown.springify()
+            .damping(60)
+            .mass(4)
+            .stiffness(1200)
+            .withInitialValues({ opacity: 1 })}
           style={[
             styles.card,
             {

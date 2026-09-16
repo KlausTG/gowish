@@ -64,9 +64,9 @@ export function useReserveWish() {
       }
       Alert.alert("Could not reserve", error.message);
     },
-    onSuccess: () => {
+    onSuccess: (item) => {
       void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      showToast("Item reserved");
+      showToast(`${item.title} reserved`);
     },
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: wishlistKeys.all });

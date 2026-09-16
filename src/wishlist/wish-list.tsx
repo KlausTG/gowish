@@ -8,11 +8,11 @@ import {
   Pressable,
   RefreshControl,
   StyleSheet,
+  useWindowDimensions,
   View,
 } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
 import { CreateWishDialog } from "./create-wish-dialog";
-import { ListControls } from "./list-controls";
 import { ListFilterDialog } from "./list-filter-dialog";
 import { ListSortDialog } from "./list-sort-dialog";
 import type { WishItem } from "./types";
@@ -30,6 +30,10 @@ type WishListProps = {
   onViewOptionsChange: (options: ViewOptions) => void;
   createOpen: boolean;
   onCreateOpenChange: (open: boolean) => void;
+  filterOpen: boolean;
+  onFilterOpenChange: (open: boolean) => void;
+  sortOpen: boolean;
+  onSortOpenChange: (open: boolean) => void;
 };
 
 export function WishList({
@@ -37,13 +41,15 @@ export function WishList({
   onViewOptionsChange,
   createOpen,
   onCreateOpenChange,
+  filterOpen,
+  onFilterOpenChange,
+  sortOpen,
+  onSortOpenChange,
 }: WishListProps) {
   const theme = useTheme();
   const { data, error, isPending, isError, isRefetching, refetch } =
     useWishlist();
   const [selectedItem, setSelectedItem] = useState<WishItem | null>(null);
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [sortOpen, setSortOpen] = useState(false);
   const [bannerDismissed, setBannerDismissed] = useState(false);
 
   const allItems = data ?? EMPTY_WISH_ITEMS;
@@ -52,31 +58,77 @@ export function WishList({
     [allItems, viewOptions]
   );
 
+  const height = useWindowDimensions().height;
   const showStaleBanner = isError && !!data && !bannerDismissed;
 
+  const isFilteredEmpty =
+    allItems.length > 0 &&
+    displayedItems.length === 0 &&
+    viewOptions.onlyUnreserved;
+
+  let content;
   if (isPending) {
-    return (
+    content = (
       <View style={styles.flex}>
         {Array.from({ length: SKELETON_ROWS }, (_, index) => (
           <WishRowSkeleton key={index} />
         ))}
       </View>
     );
-  }
-
-  if (isError && !data) {
-    return (
+  } else if (isError && !data) {
+    content = (
       <ErrorStateView
         message={error?.message}
         onAction={() => void refetch()}
       />
     );
+  } else if (allItems.length === 0) {
+    content = (
+      <EmptyStateView
+        actionLabel="Add your first wish"
+        message="Start the shared wishlist by adding something you would love to receive."
+        title="No wishes yet"
+        onAction={() => onCreateOpenChange(true)}
+      />
+    );
+  } else if (isFilteredEmpty) {
+    content = (
+      <EmptyStateView
+        actionLabel="Show all"
+        message="Try turning off the filter or check back when something opens up."
+        title="Everything here is taken"
+        onAction={() =>
+          onViewOptionsChange({ ...viewOptions, onlyUnreserved: false })
+        }
+      />
+    );
+  } else {
+    content = (
+      <Animated.FlatList
+        data={displayedItems}
+        contentContainerStyle={{ paddingBottom: height / 3 }}
+        itemLayoutAnimation={LinearTransition}
+        keyboardDismissMode="on-drag"
+        keyExtractor={(item) => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching && !isPending}
+            onRefresh={() => {
+              setBannerDismissed(false);
+              void refetch();
+            }}
+          />
+        }
+        renderItem={({ item }) => (
+          <WishRow
+            dimmed={item.id.startsWith("optimistic-")}
+            item={item}
+            onPress={setSelectedItem}
+          />
+        )}
+      />
+    );
   }
-
-  const isFilteredEmpty =
-    allItems.length > 0 &&
-    displayedItems.length === 0 &&
-    viewOptions.onlyUnreserved;
 
   return (
     <View style={styles.flex}>
@@ -93,54 +145,7 @@ export function WishList({
         </View>
       ) : null}
 
-      <ListControls
-        items={allItems}
-        options={viewOptions}
-        onOpenFilter={() => setFilterOpen(true)}
-        onOpenSort={() => setSortOpen(true)}
-      />
-
-      {allItems.length === 0 ? (
-        <EmptyStateView
-          actionLabel="Add your first wish"
-          message="Start the shared wishlist by adding something you would love to receive."
-          title="No wishes yet"
-          onAction={() => onCreateOpenChange(true)}
-        />
-      ) : isFilteredEmpty ? (
-        <EmptyStateView
-          actionLabel="Show all"
-          message="Try turning off the filter or check back when something opens up."
-          title="Everything here is taken"
-          onAction={() =>
-            onViewOptionsChange({ ...viewOptions, onlyUnreserved: false })
-          }
-        />
-      ) : (
-        <Animated.FlatList
-          data={displayedItems}
-          itemLayoutAnimation={LinearTransition}
-          keyboardDismissMode="on-drag"
-          keyExtractor={(item) => item.id}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefetching && !isPending}
-              onRefresh={() => {
-                setBannerDismissed(false);
-                void refetch();
-              }}
-            />
-          }
-          renderItem={({ item }) => (
-            <WishRow
-              dimmed={item.id.startsWith("optimistic-")}
-              item={item}
-              onPress={setSelectedItem}
-            />
-          )}
-          contentContainerStyle={styles.listContent}
-        />
-      )}
+      {content}
 
       <WishDetailsDialog
         item={selectedItem}
@@ -154,13 +159,13 @@ export function WishList({
       <ListFilterDialog
         options={viewOptions}
         visible={filterOpen}
-        onClose={() => setFilterOpen(false)}
+        onClose={() => onFilterOpenChange(false)}
         onChange={onViewOptionsChange}
       />
       <ListSortDialog
         options={viewOptions}
         visible={sortOpen}
-        onClose={() => setSortOpen(false)}
+        onClose={() => onSortOpenChange(false)}
         onChange={onViewOptionsChange}
       />
 
@@ -176,9 +181,6 @@ export function WishList({
 const styles = StyleSheet.create({
   flex: {
     flex: 1,
-  },
-  listContent: {
-    paddingBottom: Spacing.five,
   },
   banner: {
     flexDirection: "row",

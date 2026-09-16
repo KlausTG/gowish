@@ -17,6 +17,8 @@ export default function RootLayout() {
             options={{
               title: "Wishlist",
               headerLargeTitle: true,
+              headerShadowVisible: false,
+              headerLargeTitleShadowVisible: false,
             }}
           />
         </Stack>

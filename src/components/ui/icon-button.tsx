@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View, type PressableProps } from "react-native";
 
-import { Radius, Spacing } from "@/constants/theme";
+import { IconSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 
 import { SymbolIcon, type SymbolIconProps } from "./symbol-icon";
@@ -14,7 +14,7 @@ export type IconButtonProps = PressableProps & {
 
 export function IconButton({
   icon,
-  size = 22,
+  size = IconSize.sm,
   active,
   showActiveDot,
   style,

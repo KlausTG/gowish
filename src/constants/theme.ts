@@ -74,6 +74,12 @@ export const Radius = {
   full: 9999,
 } as const;
 
+export const IconSize = {
+  sm: 22,
+  md: 28,
+  xl: 48,
+} as const;
+
 export const Typography = {
   title: {
     fontSize: 28,

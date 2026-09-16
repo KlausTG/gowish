@@ -3,6 +3,8 @@ import { SymbolView } from "expo-symbols";
 import { type ColorValue, View } from "react-native";
 import type { SFSymbol } from "sf-symbols-typescript";
 
+import { IconSize } from "@/constants/theme";
+
 type CrossPlatformSymbol = {
   ios: SFSymbol;
   android: AndroidSymbol;
@@ -15,7 +17,11 @@ export type SymbolIconProps = {
   tintColor?: ColorValue;
 };
 
-export function SymbolIcon({ name, size = 22, tintColor }: SymbolIconProps) {
+export function SymbolIcon({
+  name,
+  size = IconSize.sm,
+  tintColor,
+}: SymbolIconProps) {
   return (
     <SymbolView
       name={{ ios: name.ios, android: name.android, web: name.web }}

@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 
-import { Spacing } from "@/constants/theme";
+import { IconSize, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 
 import { Button } from "./button";
@@ -26,7 +26,7 @@ export function EmptyStateView({
     <View style={styles.centered}>
       <SymbolIcon
         name={Symbols.gift}
-        size={48}
+        size={IconSize.xl}
         tintColor={theme.textSecondary}
       />
       <UIText variant="heading" style={styles.title}>
@@ -54,7 +54,11 @@ export function ErrorStateView({
 
   return (
     <View style={styles.centered}>
-      <SymbolIcon name={Symbols.error} size={48} tintColor={theme.danger} />
+      <SymbolIcon
+        name={Symbols.error}
+        size={IconSize.xl}
+        tintColor={theme.danger}
+      />
       <UIText variant="heading" style={styles.title}>
         {title}
       </UIText>

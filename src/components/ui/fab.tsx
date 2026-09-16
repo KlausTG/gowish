@@ -1,4 +1,4 @@
-import { Radius, Spacing } from "@/constants/theme";
+import { IconSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { Pressable, StyleSheet, type PressableProps } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -32,7 +32,7 @@ export function Fab({ icon, accessibilityLabel, style, ...rest }: FabProps) {
       ]}
       {...rest}
     >
-      <SymbolIcon name={icon} size={28} tintColor="#fff" />
+      <SymbolIcon name={icon} size={IconSize.md} tintColor="#fff" />
     </Pressable>
   );
 }

@@ -57,41 +57,23 @@ export function WishList({
     [allItems, viewOptions]
   );
 
-  const height = useWindowDimensions().height;
+  const { height } = useWindowDimensions();
   const showStaleBanner = isError && !!data && !bannerDismissed;
+  const isListEmpty = displayedItems.length === 0;
 
-  const isFilteredEmpty =
-    allItems.length > 0 &&
-    displayedItems.length === 0 &&
-    viewOptions.onlyUnreserved;
+  const listEmptyComponent = useMemo(() => {
+    if (allItems.length === 0) {
+      return (
+        <EmptyStateView
+          actionLabel="Add your first wish"
+          message="Start the shared wishlist by adding something you would love to receive."
+          title="No wishes yet"
+          onAction={() => onCreateOpenChange(true)}
+        />
+      );
+    }
 
-  let content;
-  if (isPending) {
-    content = (
-      <View style={styles.flex}>
-        {Array.from({ length: SKELETON_ROWS }, (_, index) => (
-          <WishRowSkeleton key={index} />
-        ))}
-      </View>
-    );
-  } else if (isError && !data) {
-    content = (
-      <ErrorStateView
-        message={error?.message}
-        onAction={() => void refetch()}
-      />
-    );
-  } else if (allItems.length === 0) {
-    content = (
-      <EmptyStateView
-        actionLabel="Add your first wish"
-        message="Start the shared wishlist by adding something you would love to receive."
-        title="No wishes yet"
-        onAction={() => onCreateOpenChange(true)}
-      />
-    );
-  } else if (isFilteredEmpty) {
-    content = (
+    return (
       <EmptyStateView
         actionLabel="Show all"
         message="Try turning off the filter or check back when something opens up."
@@ -101,51 +83,10 @@ export function WishList({
         }
       />
     );
-  } else {
-    content = (
-      <Animated.FlatList
-        data={displayedItems}
-        contentContainerStyle={{ paddingBottom: height / 3 }}
-        itemLayoutAnimation={LinearTransition}
-        keyboardDismissMode="on-drag"
-        keyExtractor={(item) => item.id}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefetching && !isPending}
-            onRefresh={() => {
-              setBannerDismissed(false);
-              void refetch();
-            }}
-          />
-        }
-        renderItem={({ item }) => (
-          <WishRow
-            dimmed={item.id.startsWith("optimistic-")}
-            item={item}
-            onPress={setSelectedItem}
-          />
-        )}
-      />
-    );
-  }
+  }, [allItems.length, onCreateOpenChange, onViewOptionsChange, viewOptions]);
 
-  return (
-    <View style={styles.flex}>
-      {showStaleBanner ? (
-        <View style={[styles.banner, { backgroundColor: theme.dangerSurface }]}>
-          <UIText variant="caption" style={styles.bannerText}>
-            Could not refresh. Showing the last loaded list.
-          </UIText>
-          <Pressable hitSlop={8} onPress={() => setBannerDismissed(true)}>
-            <UIText variant="label" color="danger">
-              Dismiss
-            </UIText>
-          </Pressable>
-        </View>
-      ) : null}
-
-      {content}
-
+  const overlays = (
+    <>
       <WishDetailsDialog
         item={selectedItem}
         visible={selectedItem !== null}
@@ -167,6 +108,74 @@ export function WishList({
         onClose={() => onSortOpenChange(false)}
         onChange={onViewOptionsChange}
       />
+    </>
+  );
+
+  if (isPending) {
+    return (
+      <View style={styles.flex}>
+        {Array.from({ length: SKELETON_ROWS }, (_, index) => (
+          <WishRowSkeleton key={index} />
+        ))}
+        {overlays}
+      </View>
+    );
+  }
+
+  if (isError && !data) {
+    return (
+      <View style={styles.flex}>
+        <ErrorStateView
+          message={error?.message}
+          onAction={() => void refetch()}
+        />
+        {overlays}
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.flex}>
+      {showStaleBanner ? (
+        <View style={[styles.banner, { backgroundColor: theme.dangerSurface }]}>
+          <UIText variant="caption" style={styles.bannerText}>
+            Could not refresh. Showing the last loaded list.
+          </UIText>
+          <Pressable hitSlop={8} onPress={() => setBannerDismissed(true)}>
+            <UIText variant="label" color="danger">
+              Dismiss
+            </UIText>
+          </Pressable>
+        </View>
+      ) : null}
+
+      <Animated.FlatList
+        data={displayedItems}
+        contentContainerStyle={
+          isListEmpty ? styles.listEmptyContent : { paddingBottom: height / 3 }
+        }
+        itemLayoutAnimation={LinearTransition}
+        keyboardDismissMode="on-drag"
+        keyExtractor={(item) => item.id}
+        ListEmptyComponent={listEmptyComponent}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching && !isPending}
+            onRefresh={() => {
+              setBannerDismissed(false);
+              void refetch();
+            }}
+          />
+        }
+        renderItem={({ item }) => (
+          <WishRow
+            dimmed={item.id.startsWith("optimistic-")}
+            item={item}
+            onPress={setSelectedItem}
+          />
+        )}
+      />
+      {overlays}
     </View>
   );
 }
@@ -174,6 +183,9 @@ export function WishList({
 const styles = StyleSheet.create({
   flex: {
     flex: 1,
+  },
+  listEmptyContent: {
+    flexGrow: 1,
   },
   banner: {
     flexDirection: "row",

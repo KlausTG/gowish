@@ -1,6 +1,6 @@
 import { addItem } from "@/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Alert } from "react-native";
 import { wishlistKeys } from "./keys";
 import type { WishItem } from "./types";
@@ -67,7 +67,9 @@ export function useAddWish() {
     },
   });
 
-  retryRef.current = mutation.mutate;
+  useEffect(() => {
+    retryRef.current = mutation.mutate;
+  }, [mutation.mutate]);
 
   return mutation;
 }

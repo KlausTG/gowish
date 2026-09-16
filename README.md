@@ -44,6 +44,7 @@ Screens live under `src/app` using file-based routing.
 - **Privacy** — Avoid showing who reserved an item, in `src/wishlist/wish-row.tsx` and in conflict messaging (e.g. “Item already reserved”). Anonymize labels from `reservedByLabel` so gift surprises are not spoiled.
 - **Stable list layout** — The “Reserved by …” pill appears only for taken items and changes row height by a few pixels, which shifts the list. Reserve space for the status row (or use a fixed min height) so layout does not jump.
 - **Paste URL** — Add a “Paste from clipboard” control beside the URL field in `src/wishlist/create-wish-form.tsx` to support one-tap pasting from the browser or messages.
+- **Stale list retry** — The banner in `src/wishlist/wish-list.tsx` currently only dismisses a failed refresh while cached data stays on screen. Prompt a Retry that refetches the list instead of (or in addition to) Dismiss, so users can recover without pull-to-refresh.
 
 ### Developer experience improvements
 

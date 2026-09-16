@@ -6,6 +6,7 @@ import {
   unreserveItem,
 } from "@/api";
 import { reservedByLabel } from "@/utils/format";
+import { showToast } from "@/utils/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
 import { Alert } from "react-native";
@@ -65,6 +66,7 @@ export function useReserveWish() {
     },
     onSuccess: () => {
       void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      showToast("Item reserved");
     },
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: wishlistKeys.all });
@@ -109,6 +111,7 @@ export function useReserveWish() {
     },
     onSuccess: () => {
       void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      showToast("Item released from reservation");
     },
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: wishlistKeys.all });

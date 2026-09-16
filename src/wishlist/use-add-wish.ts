@@ -1,4 +1,5 @@
 import { addItem } from "@/api";
+import { showToast } from "@/utils/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { Alert } from "react-native";
@@ -42,12 +43,14 @@ export function useAddWish() {
       return { previousItems, optimisticId } satisfies AddWishContext;
     },
     onSuccess: (item, _input, context) => {
-      if (!context?.optimisticId) return;
-      queryClient.setQueryData<WishItem[]>(wishlistKeys.all, (old) =>
-        old
-          ? old.map((row) => (row.id === context.optimisticId ? item : row))
-          : [item]
-      );
+      if (context?.optimisticId) {
+        queryClient.setQueryData<WishItem[]>(wishlistKeys.all, (old) =>
+          old
+            ? old.map((row) => (row.id === context.optimisticId ? item : row))
+            : [item]
+        );
+      }
+      showToast(`${item.title} was added to list`);
     },
     onError: (error, input, context) => {
       if (context?.previousItems) {

@@ -6,7 +6,17 @@ import { useTheme } from "@/hooks/use-theme";
 import { Dialog } from "@/components/ui/dialog";
 import { UIText } from "@/components/ui/text";
 
+import { showToast } from "@/utils/toast";
+
 import { defaultViewOptions, type ViewOptions } from "./view-options";
+
+function toastFilter(onlyUnreserved: boolean) {
+  showToast(
+    onlyUnreserved
+      ? "Only showing unreserved wishes"
+      : "Showing all wishes"
+  );
+}
 
 type ListFilterDialogProps = {
   visible: boolean;
@@ -33,20 +43,25 @@ export function ListFilterDialog({
           trackColor={{ false: theme.border, true: theme.accent }}
           thumbColor={theme.background}
           value={options.onlyUnreserved}
-          onValueChange={(onlyUnreserved) =>
-            onChange({ ...options, onlyUnreserved })
-          }
+          onValueChange={(onlyUnreserved) => {
+            toastFilter(onlyUnreserved);
+            onChange({ ...options, onlyUnreserved });
+          }}
         />
       </View>
       <Pressable
         accessibilityRole="button"
         hitSlop={8}
-        onPress={() =>
+        onPress={() => {
+          const onlyUnreserved = defaultViewOptions.onlyUnreserved;
+          if (options.onlyUnreserved !== onlyUnreserved) {
+            toastFilter(onlyUnreserved);
+          }
           onChange({
             ...options,
-            onlyUnreserved: defaultViewOptions.onlyUnreserved,
-          })
-        }
+            onlyUnreserved,
+          });
+        }}
       >
         <UIText color="accent" variant="label">
           Reset filter

@@ -2,6 +2,7 @@ import { EmptyStateView, ErrorStateView } from "@/components/ui/state-views";
 import { UIText } from "@/components/ui/text";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
+import { showToast } from "@/utils/toast";
 import { useMemo, useState } from "react";
 import {
   Pressable,
@@ -78,9 +79,10 @@ export function WishList({
         actionLabel="Show all"
         message="Try turning off the filter or check back when something opens up."
         title="Everything here is taken"
-        onAction={() =>
-          onViewOptionsChange({ ...viewOptions, onlyUnreserved: false })
-        }
+        onAction={() => {
+          showToast("Showing all wishes");
+          onViewOptionsChange({ ...viewOptions, onlyUnreserved: false });
+        }}
       />
     );
   }, [allItems.length, onCreateOpenChange, onViewOptionsChange, viewOptions]);

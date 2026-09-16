@@ -53,7 +53,7 @@ export function Dialog({ visible, title, onClose, children }: DialogProps) {
         />
         <Animated.View
           entering={FadeInDown.springify()
-            .damping(60)
+            .damping(80)
             .mass(4)
             .stiffness(1200)
             .withInitialValues({ opacity: 1 })}

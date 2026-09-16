@@ -4,7 +4,6 @@ import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { useMemo, useState } from "react";
 import {
-  ActivityIndicator,
   Pressable,
   RefreshControl,
   StyleSheet,
@@ -168,12 +167,6 @@ export function WishList({
         onClose={() => onSortOpenChange(false)}
         onChange={onViewOptionsChange}
       />
-
-      {isRefetching && !isPending && displayedItems.length > 0 ? (
-        <View style={styles.refetchIndicator} pointerEvents="none">
-          <ActivityIndicator color={theme.accent} />
-        </View>
-      ) : null}
     </View>
   );
 }
@@ -192,10 +185,5 @@ const styles = StyleSheet.create({
   },
   bannerText: {
     flex: 1,
-  },
-  refetchIndicator: {
-    position: "absolute",
-    top: Spacing.two,
-    alignSelf: "center",
   },
 });

@@ -1,9 +1,4 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- */
-
 import "@/global.css";
-
 import { Platform } from "react-native";
 
 export const Colors = {
@@ -13,7 +8,7 @@ export const Colors = {
     backgroundElement: "#F0F0F3",
     backgroundSelected: "#E0E1E6",
     textSecondary: "#60646C",
-    accent: "#4397FF",
+    accent: "#4397FF", // Brand color
     accentOnSurface: "#E6F4FE",
     border: "#D8D9E0",
     danger: "#E5484D",

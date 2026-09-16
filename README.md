@@ -65,5 +65,8 @@ Screens live under `src/app` using file-based routing.
 ## What I'm not satisfied with
 
 - **`create-wish-dialog.tsx`** — Most in need of a refactor into a dedicated screen for keyboard and layout headroom.
-- **Overall styling** — Colors, spacing, and typography should follow the real GoWish design system; here they are improvised for the case.
+- **Overall styling** — Colors, spacing, and typography should follow the real GoWish design system; here they are improvised for the case under a time constraint.
 - **Dialog motion** — The fade/slide entrance on dialogs still feels slightly off and would benefit from dedicated tuning.
+- **New items at the bottom** — The API appends created wishes to the end of the list, which is less intuitive than showing the newest item first. On successful creation, consider auto-scrolling to the bottom so the user immediately sees their new row in the list.
+- **Native error alerts** — Error handling currently uses the native `Alert()`, which is not styleable. Custom error dialogs that match the app’s branded visual style would feel more cohesive.
+- **Pagination** — In production, large wishlists would likely need pagination. The mock server does not support it today; if it did, we would implement infinite scroll that fetches the next page once the user scrolls past a threshold.

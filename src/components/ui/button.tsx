@@ -32,7 +32,7 @@ export function Button({
       ? theme.accent
       : variant === "destructive"
       ? theme.danger
-      : theme.backgroundElement;
+      : theme.backgroundMuted;
 
   const labelColor =
     variant === "secondary"

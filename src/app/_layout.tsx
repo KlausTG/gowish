@@ -1,6 +1,6 @@
+import { useTheme } from "@/hooks/use-theme";
 import "@/lib/polyfills";
 import { QueryProvider } from "@/lib/query-provider";
-import { useTheme } from "@/hooks/use-theme";
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
 import { useColorScheme } from "react-native";
 

@@ -58,7 +58,7 @@ Screens live under `src/app` using file-based routing.
 - **Locale and currency** — `"DKK"` and `"da-DK"` are scattered across the API, optimistic add payload, and `formatPrice`; centralize defaults for a real backend later.
 - **Optimistic rows** — Optimistic IDs use the `optimistic-${Date.now()}` prefix and the list dims rows via `startsWith("optimistic-")`. A shared helper or explicit flag on cached items would be safer than string conventions.
 - **`CURRENT_USER` in labels** — `reservedByLabel` compares against the literal `"you"` instead of `CURRENT_USER` from `src/api.ts`, so renaming the current user would break copy silently.
-- **Motion and layout magic numbers** — Press opacities, image transition duration, dialog spring parameters, FAB bottom offset (`FAB_EDGE_INSET * 3`), and list `paddingBottom: height / 3` are ad hoc; derive FAB clearance from FAB metrics and name animation presets.
+- **Motion and layout magic numbers** — Press opacities, image transition duration, and dialog spring parameters are ad hoc; name animation presets.
 - **Theme module purity** — `theme.ts` imports `@/global.css` for side effects; constants and global CSS setup could be split so theme exports stay dependency-light.
 
 ## What I'm not satisfied with

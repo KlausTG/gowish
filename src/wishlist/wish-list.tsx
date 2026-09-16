@@ -1,3 +1,4 @@
+import { FAB_CLEARANCE } from "@/components/ui/fab";
 import { EmptyStateView, ErrorStateView } from "@/components/ui/state-views";
 import { UIText } from "@/components/ui/text";
 import { Spacing } from "@/constants/theme";
@@ -8,10 +9,10 @@ import {
   Pressable,
   RefreshControl,
   StyleSheet,
-  useWindowDimensions,
   View,
 } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CreateWishDialog } from "./create-wish-dialog";
 import { ListFilterDialog } from "./list-filter-dialog";
 import { ListSortDialog } from "./list-sort-dialog";
@@ -58,7 +59,7 @@ export function WishList({
     [allItems, viewOptions]
   );
 
-  const { height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const showStaleBanner = isError && !!data && !bannerDismissed;
   const isListEmpty = displayedItems.length === 0;
 
@@ -154,7 +155,9 @@ export function WishList({
       <Animated.FlatList
         data={displayedItems}
         contentContainerStyle={
-          isListEmpty ? styles.listEmptyContent : { paddingBottom: height / 3 }
+          isListEmpty
+            ? styles.listEmptyContent
+            : { paddingBottom: insets.bottom + FAB_CLEARANCE }
         }
         itemLayoutAnimation={LinearTransition}
         keyboardDismissMode="on-drag"

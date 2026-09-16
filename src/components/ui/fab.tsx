@@ -6,6 +6,7 @@ import { SymbolIcon, type SymbolIconProps } from "./symbol-icon";
 
 export const FAB_SIZE = 56;
 export const FAB_EDGE_INSET = Spacing.three;
+export const FAB_CLEARANCE = FAB_SIZE + FAB_EDGE_INSET;
 
 export type FabProps = PressableProps & {
   icon: SymbolIconProps["name"];
@@ -25,7 +26,7 @@ export function Fab({ icon, accessibilityLabel, style, ...rest }: FabProps) {
         styles.base,
         {
           backgroundColor: theme.accent,
-          bottom: insets.bottom + FAB_EDGE_INSET * 3,
+          bottom: insets.bottom + FAB_CLEARANCE,
           opacity: state.pressed ? 0.85 : 1,
         },
         typeof style === "function" ? style(state) : style,

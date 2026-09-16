@@ -4,8 +4,8 @@ import { Platform } from "react-native";
 export const Colors = {
   light: {
     text: "#000000",
-    background: "#ffffff",
-    backgroundElement: "#F0F0F3",
+    background: "#ebf4ff",
+    backgroundMuted: "#d6e9ff",
     backgroundSelected: "#c2ddff",
     textSecondary: "#60646C",
     accent: "#4397FF", // Brand color
@@ -19,8 +19,8 @@ export const Colors = {
   },
   dark: {
     text: "#ffffff",
-    background: "#000000",
-    backgroundElement: "#212225",
+    background: "#000914",
+    backgroundMuted: "#001229",
     backgroundSelected: "#002e66",
     textSecondary: "#B0B4BA",
     accent: "#4397FF",

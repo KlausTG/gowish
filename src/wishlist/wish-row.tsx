@@ -51,7 +51,7 @@ export function WishRow({ item, onPress, dimmed }: WishRowProps) {
         </UIText>
         {status ? (
           <View
-            style={[styles.pill, { backgroundColor: theme.backgroundElement }]}
+            style={[styles.pill, { backgroundColor: theme.backgroundMuted }]}
           >
             <UIText variant="caption" color="textSecondary">
               {status}

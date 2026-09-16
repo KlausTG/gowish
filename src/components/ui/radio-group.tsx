@@ -38,7 +38,7 @@ export function RadioGroup<T extends string>({
               {
                 backgroundColor: selected
                   ? theme.backgroundSelected
-                  : theme.backgroundElement,
+                  : theme.backgroundMuted,
                 borderColor: selected ? theme.accent : theme.border,
                 opacity: pressed ? 0.75 : 1,
               },

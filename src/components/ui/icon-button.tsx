@@ -31,7 +31,7 @@ export function IconButton({
         {
           backgroundColor: active
             ? theme.accentOnSurface
-            : theme.backgroundElement,
+            : theme.backgroundMuted,
           opacity: state.pressed ? 0.7 : 1,
         },
         typeof style === "function" ? style(state) : style,

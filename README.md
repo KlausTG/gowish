@@ -36,7 +36,7 @@ Screens live under `src/app` using file-based routing.
 
 ## If I had more time
 
-### User experience
+### User experience improvements
 
 - **Validation** — Improve the create-wish flow in `src/wishlist/create-wish-form.tsx` with clearer limits and requirements, using more **progressive disclosure** (the established pattern of revealing detail only when it matters). The title field already hints at length after 60 characters (`63/75 characters`); the same idea could extend to price and URL rules.
 - **Create wish as a screen** — Replace `src/wishlist/create-wish-dialog.tsx` with a dedicated full-screen modal route in the Stack rather than a bottom sheet dialog. Forms with more than a couple of fields benefit from the space, especially on mobile where the keyboard consumes a large share of the viewport.
@@ -45,12 +45,13 @@ Screens live under `src/app` using file-based routing.
 - **Stable list layout** — The “Reserved by …” pill appears only for taken items and changes row height by a few pixels, which shifts the list. Reserve space for the status row (or use a fixed min height) so layout does not jump.
 - **Paste URL** — Add a “Paste from clipboard” control beside the URL field in `src/wishlist/create-wish-form.tsx` to support one-tap pasting from the browser or messages.
 
-### Developer experience
+### Developer experience improvements
 
 - **Theme colors** — Restructure the `Colors` object in `src/constants/theme.ts` into `background`, `text`, `icon`, and `border` groupings so it is harder to pick the wrong token for a given surface.
 - **Font sizes** — Introduce a `FONT_SIZE` object in `src/constants/theme.ts` as a single source of truth, and for inline styles that only need a size without full `Typography` (line height, font family, weight).
 - **Feature components** — Colocate `src/wishlist/` under `src/components/`; those files are still UI components, just scoped to the wishlist feature.
 - **Hooks location** — Consider moving `use-add-wish.ts`, `use-reserve-wish.ts`, and `use-wishlist.ts` into `src/hooks/` as the app grows and multiple features share the same server state.
+- **Button variants** — In a real project we would likely need more button styles via a `variant` (or similar) prop: `primary`, `secondary`, `flat`, `outline`, and so on, as in a modern design system. `src/components/ui/button.tsx` only covers a subset today; expanding typed variants would let developers pass one value and get consistent styling without reimplementing surfaces.
 - **On-surface colors** — `#fff` is hard-coded for labels and icons on primary buttons and the FAB; a theme token (e.g. on-accent) would support theming and dark mode consistently. `wish-image.tsx` uses a hard-coded placeholder gray that duplicates `skeleton` and ignores dark mode.
 - **Interaction tokens** — `hitSlop={8}` is repeated across several components; `minHeight: 48` is duplicated on buttons and text fields. Named constants (including minimum touch target) would reduce drift.
 - **Validation constants** — Title max length (75), the progressive-disclosure threshold (60), and price ceiling live in both `src/utils/validate.ts` and the form; error copy for max price duplicates the numeric limit. Export shared limits so UI and rules stay aligned.

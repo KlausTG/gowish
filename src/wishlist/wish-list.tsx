@@ -1,3 +1,7 @@
+import { EmptyStateView, ErrorStateView } from "@/components/ui/state-views";
+import { UIText } from "@/components/ui/text";
+import { Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -7,13 +11,6 @@ import {
   View,
 } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
-
-import { Spacing } from "@/constants/theme";
-import { useTheme } from "@/hooks/use-theme";
-
-import { EmptyStateView, ErrorStateView } from "@/components/ui/state-views";
-import { UIText } from "@/components/ui/text";
-
 import { CreateWishDialog } from "./create-wish-dialog";
 import { ListControls } from "./list-controls";
 import { ListFilterDialog } from "./list-filter-dialog";
@@ -26,6 +23,7 @@ import { WishRow } from "./wish-row";
 import { WishRowSkeleton } from "./wish-row-skeleton";
 
 const SKELETON_ROWS = 6;
+const EMPTY_WISH_ITEMS: WishItem[] = [];
 
 type WishListProps = {
   viewOptions: ViewOptions;
@@ -48,7 +46,7 @@ export function WishList({
   const [sortOpen, setSortOpen] = useState(false);
   const [bannerDismissed, setBannerDismissed] = useState(false);
 
-  const allItems = data ?? [];
+  const allItems = data ?? EMPTY_WISH_ITEMS;
   const displayedItems = useMemo(
     () => applyViewOptions(allItems, viewOptions),
     [allItems, viewOptions]

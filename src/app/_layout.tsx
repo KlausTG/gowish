@@ -18,7 +18,7 @@ export default function RootLayout() {
               contentStyle: {
                 backgroundColor: theme.background,
               },
-              title: "Wishlist",
+              title: "My wishlist",
               headerLargeTitle: true,
               headerShadowVisible: false,
               headerLargeTitleShadowVisible: false,

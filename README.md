@@ -66,4 +66,3 @@ Screens live under `src/app` using file-based routing.
 - **`create-wish-dialog.tsx`** — Most in need of a refactor into a dedicated screen for keyboard and layout headroom.
 - **Overall styling** — Colors, spacing, and typography should follow the real GoWish design system; here they are improvised for the case.
 - **Dialog motion** — The fade/slide entrance on dialogs still feels slightly off and would benefit from dedicated tuning.
-- **`wish-details-dialog.tsx`** — The layout is weaker than the list row; reusing `wish-row.tsx` (or the same structure) would likely look more cohesive.

@@ -3,7 +3,13 @@ import { UIText } from "@/components/ui/text";
 import { Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { formatPrice, reservedByLabel } from "@/utils/format";
-import { Pressable, StyleSheet, View } from "react-native";
+import {
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from "react-native";
 
 import type { WishItem } from "./types";
 import { WishImage } from "./wish-image";
@@ -17,28 +23,40 @@ export const WishRowMetrics = {
 
 type WishRowProps = {
   item: WishItem;
-  onPress: (item: WishItem) => void;
+  onPress?: (item: WishItem) => void;
   dimmed?: boolean;
+  disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
 };
 
-export function WishRow({ item, onPress, dimmed }: WishRowProps) {
+export function WishRow({
+  item,
+  onPress,
+  dimmed,
+  disabled,
+  style,
+}: WishRowProps) {
   const theme = useTheme();
   const reserved = item.reservedBy !== null;
   const status = reservedByLabel(item.reservedBy);
 
   return (
     <Pressable
-      accessibilityRole="button"
-      android_ripple={{ color: theme.backgroundSelected }}
-      hitSlop={8}
-      onPress={() => onPress(item)}
+      accessibilityRole={disabled ? "none" : "button"}
+      android_ripple={
+        disabled ? undefined : { color: theme.backgroundSelected }
+      }
+      disabled={disabled}
+      hitSlop={disabled ? undefined : 8}
+      onPress={disabled ? undefined : () => onPress?.(item)}
       style={({ pressed }) => [
         styles.row,
         {
-          opacity: dimmed || reserved ? 0.55 : pressed ? 0.6 : 1,
-          transform: [{ scale: pressed ? 0.985 : 1 }],
+          opacity: disabled ? 1 : dimmed || reserved ? 0.55 : pressed ? 0.6 : 1,
+          transform: [{ scale: disabled || !pressed ? 1 : 0.985 }],
           borderBottomColor: theme.border,
         },
+        style,
       ]}
     >
       <WishImage imageUrl={item.imageUrl} size={WishRowMetrics.thumbSize} />

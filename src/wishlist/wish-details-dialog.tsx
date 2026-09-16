@@ -5,11 +5,11 @@ import { SymbolIcon, Symbols } from "@/components/ui/symbol-icon";
 import { UIText } from "@/components/ui/text";
 import { Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
-import { formatPrice, reservedByLabel } from "@/utils/format";
+import { reservedByLabel } from "@/utils/format";
 import { Linking, Pressable, StyleSheet, View } from "react-native";
 import type { WishItem } from "./types";
 import { useReserveWish } from "./use-reserve-wish";
-import { WishImage } from "./wish-image";
+import { WishRow } from "./wish-row";
 
 type WishDetailsDialogProps = {
   item: WishItem | null;
@@ -50,11 +50,7 @@ export function WishDetailsDialog({
 
   return (
     <Dialog visible={visible} title="Wish details" onClose={onClose}>
-      <WishImage imageUrl={item.imageUrl} size={120} />
-      <UIText variant="heading">{item.title}</UIText>
-      <UIText variant="bodyStrong">
-        {formatPrice(item.priceMinor, item.currency)}
-      </UIText>
+      <WishRow disabled item={item} style={{ paddingHorizontal: 0 }} />
       {status ? (
         <UIText color="textSecondary">{status}</UIText>
       ) : (

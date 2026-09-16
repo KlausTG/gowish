@@ -1,8 +1,7 @@
-import { SymbolIcon, Symbols } from "@/components/ui/symbol-icon";
 import { Radius } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { Image } from "expo-image";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 
 type WishImageProps = {
   imageUrl?: string;
@@ -11,48 +10,41 @@ type WishImageProps = {
 
 export function WishImage({ imageUrl, size }: WishImageProps) {
   const theme = useTheme();
+  const frameStyle = {
+    width: size,
+    height: size,
+    borderRadius: Radius.md,
+  };
 
   if (imageUrl) {
     return (
       <Image
         contentFit="cover"
         source={{ uri: imageUrl }}
-        style={[
-          styles.image,
-          { width: size, height: size, borderRadius: Radius.md },
-        ]}
+        style={[styles.image, frameStyle]}
         transition={200}
       />
     );
   }
 
+  const gradient = `linear-gradient(135deg, ${theme.accentOnSurface}, ${theme.accent})`;
+
   return (
     <View
       style={[
-        styles.placeholder,
-        {
-          width: size,
-          height: size,
-          borderRadius: Radius.md,
-          backgroundColor: theme.backgroundElement,
-        },
+        frameStyle,
+        { backgroundColor: theme.accentOnSurface },
+        Platform.select({
+          web: { backgroundImage: gradient },
+          default: { experimental_backgroundImage: gradient },
+        }),
       ]}
-    >
-      <SymbolIcon
-        name={Symbols.gift}
-        size={size * 0.4}
-        tintColor={theme.textSecondary}
-      />
-    </View>
+    />
   );
 }
 
 const styles = StyleSheet.create({
   image: {
     backgroundColor: "#E8E8EC",
-  },
-  placeholder: {
-    alignItems: "center",
-    justifyContent: "center",
   },
 });

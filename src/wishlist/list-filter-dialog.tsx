@@ -1,20 +1,14 @@
-import { Pressable, StyleSheet, Switch, View } from "react-native";
-
-import { Spacing } from "@/constants/theme";
-import { useTheme } from "@/hooks/use-theme";
-
 import { Dialog } from "@/components/ui/dialog";
 import { UIText } from "@/components/ui/text";
-
+import { Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
 import { showToast } from "@/utils/toast";
-
+import { Pressable, StyleSheet, Switch, View } from "react-native";
 import { defaultViewOptions, type ViewOptions } from "./view-options";
 
 function toastFilter(onlyUnreserved: boolean) {
   showToast(
-    onlyUnreserved
-      ? "Only showing unreserved wishes"
-      : "Showing all wishes"
+    onlyUnreserved ? "Only showing unreserved wishes" : "Showing all wishes"
   );
 }
 
@@ -46,6 +40,7 @@ export function ListFilterDialog({
           onValueChange={(onlyUnreserved) => {
             toastFilter(onlyUnreserved);
             onChange({ ...options, onlyUnreserved });
+            onClose();
           }}
         />
       </View>
@@ -61,6 +56,7 @@ export function ListFilterDialog({
             ...options,
             onlyUnreserved,
           });
+          onClose();
         }}
       >
         <UIText color="accent" variant="label">

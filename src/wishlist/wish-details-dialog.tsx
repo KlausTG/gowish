@@ -1,15 +1,12 @@
-import { Linking, Pressable, StyleSheet, View } from "react-native";
-
 import { CURRENT_USER } from "@/api";
-import { Radius, Spacing } from "@/constants/theme";
-import { useTheme } from "@/hooks/use-theme";
-import { formatPrice, reservedByLabel } from "@/utils/format";
-
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { SymbolIcon, Symbols } from "@/components/ui/symbol-icon";
 import { UIText } from "@/components/ui/text";
-
+import { Radius, Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
+import { formatPrice, reservedByLabel } from "@/utils/format";
+import { Linking, Pressable, StyleSheet, View } from "react-native";
 import type { WishItem } from "./types";
 import { useReserveWish } from "./use-reserve-wish";
 import { WishImage } from "./wish-image";

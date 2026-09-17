@@ -6,7 +6,7 @@ import {
   validateTitle,
   validateUrl,
 } from "@/utils/validate";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { useAddWish, type AddWishInput } from "./use-add-wish";
 
@@ -27,16 +27,12 @@ export function CreateWishForm({ onSuccess }: CreateWishFormProps) {
   const [priceError, setPriceError] = useState<string>();
   const [urlError, setUrlError] = useState<string>();
   const [submitted, setSubmitted] = useState(false);
+  const [titleBlurred, setTitleBlurred] = useState(false);
+  const [priceBlurred, setPriceBlurred] = useState(false);
+  const [urlBlurred, setUrlBlurred] = useState(false);
 
   const titleHint =
     title.length > 60 ? `${title.length}/75 characters` : undefined;
-
-  const canSubmit = useMemo(() => {
-    const titleResult = validateTitle(title);
-    const priceResult = validatePriceInput(price);
-    const urlResult = validateUrl(url);
-    return titleResult.ok && priceResult.ok && urlResult.ok;
-  }, [title, price, url]);
 
   const submit = () => {
     setSubmitted(true);
@@ -65,6 +61,9 @@ export function CreateWishForm({ onSuccess }: CreateWishFormProps) {
     setPriceError(undefined);
     setUrlError(undefined);
     setSubmitted(false);
+    setTitleBlurred(false);
+    setPriceBlurred(false);
+    setUrlBlurred(false);
   };
 
   return (
@@ -76,11 +75,12 @@ export function CreateWishForm({ onSuccess }: CreateWishFormProps) {
         ref={titleRef}
         autoCapitalize="sentences"
         autoFocus
-        error={submitted ? titleError : undefined}
+        error={submitted || titleBlurred ? titleError : undefined}
         hint={titleHint}
         label="Title"
         maxLength={75}
         onBlur={() => {
+          setTitleBlurred(true);
           const result = validateTitle(title);
           setTitleError(result.ok ? undefined : result.error);
         }}
@@ -92,12 +92,13 @@ export function CreateWishForm({ onSuccess }: CreateWishFormProps) {
       />
       <TextField
         ref={priceRef}
-        error={submitted ? priceError : undefined}
+        error={submitted || priceBlurred ? priceError : undefined}
         hint="Amount in DKK (e.g. 449 or 449,50)"
         inputMode="decimal"
         keyboardType="decimal-pad"
         label="Price"
         onBlur={() => {
+          setPriceBlurred(true);
           const result = validatePriceInput(price);
           setPriceError(result.ok ? undefined : result.error);
         }}
@@ -111,11 +112,12 @@ export function CreateWishForm({ onSuccess }: CreateWishFormProps) {
         ref={urlRef}
         autoCapitalize="none"
         autoCorrect={false}
-        error={submitted ? urlError : undefined}
+        error={submitted || urlBlurred ? urlError : undefined}
         hint="Optional product link"
         keyboardType="url"
         label="URL"
         onBlur={() => {
+          setUrlBlurred(true);
           const result = validateUrl(url);
           setUrlError(result.ok ? undefined : result.error);
         }}
@@ -127,7 +129,7 @@ export function CreateWishForm({ onSuccess }: CreateWishFormProps) {
       />
       <View style={styles.actions}>
         <Button
-          disabled={!canSubmit || addWish.isPending}
+          disabled={addWish.isPending}
           label="Add wish"
           loading={addWish.isPending}
           onPress={submit}

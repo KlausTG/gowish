@@ -1,3 +1,5 @@
+import { CURRENT_USER } from "@/api";
+
 export function formatPrice(priceMinor: number, currency: string): string {
   const major = priceMinor / 100;
   try {
@@ -13,7 +15,7 @@ export function formatPrice(priceMinor: number, currency: string): string {
 
 export function reservedByLabel(reservedBy: string | null): string | null {
   if (!reservedBy) return null;
-  if (reservedBy === "you") return "Reserved by you";
+  if (reservedBy === CURRENT_USER) return "Reserved by you";
   const name = reservedBy.charAt(0).toUpperCase() + reservedBy.slice(1);
   return `Reserved by ${name}`;
 }

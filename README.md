@@ -39,6 +39,7 @@ Screens live under `src/app` using file-based routing.
 ### User experience improvements
 
 - **Create wish as a screen** — Replace `src/wishlist/create-wish-dialog.tsx` with a dedicated full-screen modal route in the Stack rather than a bottom sheet dialog. Forms with more than a couple of fields benefit from the space, especially on mobile where the keyboard consumes a large share of the viewport.
+- **Unsaved changes on back** — With `src/wishlist/create-wish-dialog.tsx` open, the hardware back button closes the dialog and discards any entered data without warning. That can be acceptable on small forms, but on larger ones it is good practice to confirm before abandoning input and to require an explicit discard, so mistaken back presses do not wipe what the user already typed.
 - **Toasts on iOS** — `src/utils/toast.ts` only calls `ToastAndroid` and no-ops elsewhere. Wire up a cross-platform fallback (GoWish already has one in production) so success and info feedback is consistent on iOS.
 - **Privacy** — Avoid showing who reserved an item, in `src/wishlist/wish-row.tsx` and in conflict messaging (e.g. “Item already reserved”). Anonymize labels from `reservedByLabel` so gift surprises are not spoiled.
 - **Stable list layout** — The “Reserved by …” pill appears only for taken items and changes row height by a few pixels, which shifts the list. Reserve space for the status row (or use a fixed min height) so layout does not jump.

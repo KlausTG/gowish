@@ -22,16 +22,7 @@ const path = require("path");
 const root = process.cwd();
 
 function isPlainObject(value) {
-  return (
-    value !== null &&
-    typeof value === "object" &&
-    !Array.isArray(value) &&
-    !(value instanceof Map)
-  );
-}
-
-function isGroup(value) {
-  return value instanceof Map;
+  return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
 function isAliasString(value) {
@@ -52,7 +43,6 @@ function isColorToken(node) {
   if (!isPlainObject(node) || node.$value === undefined) return false;
   if (isAliasString(node.$value)) return true;
   if (node.$type === "color") return true;
-  // Untyped leaves that look like colors (hex / color object)
   if (typeof node.$value === "string" && /^#|^rgba?\(/i.test(node.$value.trim())) {
     return true;
   }
@@ -119,7 +109,7 @@ function isNumericKey(part) {
   return /^(0|[1-9]\d*)$/.test(part);
 }
 
-/** "{brand.50}" → "brand[50]"; "{neutral.white}" → "neutral.white" */
+/** "{brand.50}" → "brand[50]"; "{neutral.600}" → "neutral[600]" */
 function aliasToExpression(aliasValue) {
   const parts = parseAliasPath(aliasValue);
   if (parts.length < 2) {
@@ -167,10 +157,6 @@ function resolveLeaf(node, pathParts) {
   }
 }
 
-/**
- * Recursively strip DTCG metadata and resolve color leaves.
- * Groups are Maps so mixed numeric/string keys keep Figma file order.
- */
 function transformTokens(node, pathParts = []) {
   if (isColorToken(node)) {
     return resolveLeaf(node, pathParts);
@@ -182,11 +168,10 @@ function transformTokens(node, pathParts = []) {
     );
   }
 
-  const result = new Map();
-  for (const [rawKey, child] of Object.entries(node)) {
-    if (rawKey.startsWith("$")) continue;
-    const key = unwrapKey(rawKey);
-    result.set(key, transformTokens(child, [...pathParts, key]));
+  const result = {};
+  for (const [key, child] of Object.entries(node)) {
+    if (key.startsWith("$")) continue;
+    result[key] = transformTokens(child, [...pathParts, key]);
   }
   return result;
 }
@@ -196,8 +181,8 @@ function collectRefs(node, roots = new Set()) {
     roots.add(node.rootName);
     return roots;
   }
-  if (isGroup(node)) {
-    for (const child of node.values()) collectRefs(child, roots);
+  if (isPlainObject(node) && !node.__kind) {
+    for (const child of Object.values(node)) collectRefs(child, roots);
   }
   return roots;
 }
@@ -220,23 +205,36 @@ function formatValue(value, indent) {
   if (typeof value === "string") {
     return JSON.stringify(value);
   }
-  if (!isGroup(value)) {
+  if (!isPlainObject(value)) {
     return JSON.stringify(value);
   }
 
-  if (value.size === 0) return "{}";
+  const entries = Object.entries(value);
+  if (entries.length === 0) return "{}";
 
-  const lines = [...value.entries()].map(
+  const lines = entries.map(
     ([key, child]) =>
       `${childPad}${formatKey(key)}: ${formatValue(child, indent + 1)},`
   );
   return `{\n${lines.join("\n")}\n${pad}}`;
 }
 
+function mapLeaves(node, mapFn) {
+  if (isPlainObject(node) && (node.__kind === "hex" || node.__kind === "ref")) {
+    return mapFn(node);
+  }
+  if (!isPlainObject(node)) return node;
+  const out = {};
+  for (const [key, child] of Object.entries(node)) {
+    out[key] = mapLeaves(child, mapFn);
+  }
+  return out;
+}
+
 function generateBaseTypeScript(palettes) {
-  const names = [...palettes.keys()];
+  const names = Object.keys(palettes);
   const blocks = names.map((name) => {
-    const plain = mapLeaves(palettes.get(name), (leaf) => {
+    const plain = mapLeaves(palettes[name], (leaf) => {
       if (leaf.__kind === "hex") return leaf;
       throw new Error(
         `Base palette "${name}" contains an alias (${leaf.expression}). Base colors must be absolute.`
@@ -247,18 +245,6 @@ function generateBaseTypeScript(palettes) {
 
   const exportList = [...names].sort((a, b) => a.localeCompare(b)).join(", ");
   return `${blocks.join("\n\n")}\n\nexport { ${exportList} };\n`;
-}
-
-function mapLeaves(node, mapFn) {
-  if (isPlainObject(node) && (node.__kind === "hex" || node.__kind === "ref")) {
-    return mapFn(node);
-  }
-  if (!isGroup(node)) return node;
-  const out = new Map();
-  for (const [key, child] of node) {
-    out.set(key, mapLeaves(child, mapFn));
-  }
-  return out;
 }
 
 function generateColorsTypeScript(colors, importPath = "./base") {
@@ -276,30 +262,12 @@ function writeFile(filePath, contents) {
   console.log(`Wrote ${path.relative(root, filePath)}`);
 }
 
-/**
- * JS objects sort integer-index keys before other strings, which would scramble
- * Figma order like neutral.white before neutral.50. Prefix integer-looking keys
- * during parse, then strip the prefix when walking the tree.
- */
-const INT_KEY_PREFIX = "__figma_int__";
-
-function protectIntegerKeys(jsonText) {
-  return jsonText.replace(/"(\d+)"\s*:/g, `"${INT_KEY_PREFIX}$1":`);
-}
-
-function unwrapKey(key) {
-  return key.startsWith(INT_KEY_PREFIX)
-    ? key.slice(INT_KEY_PREFIX.length)
-    : key;
-}
-
 function readJson(filePath) {
   if (!fs.existsSync(filePath)) {
     console.error(`Input not found: ${filePath}`);
     process.exit(1);
   }
-  const raw = fs.readFileSync(filePath, "utf8");
-  return JSON.parse(protectIntegerKeys(raw));
+  return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
 
 function parseArgs(argv) {
@@ -337,7 +305,7 @@ function printHelp() {
   # Single file (absolute colors only)
   node scripts/tokens-to-colors.js [input.tokens.json] [output.ts]
 
-Alias format in Figma DTCG exports (from Figma's variables sample):
+Alias format in Figma DTCG exports:
   { "background": { "default": { "$type": "color", "$value": "{brand.50}" } } }
 `);
 }
@@ -356,10 +324,8 @@ function main() {
       process.exit(1);
     }
 
-    const baseRaw = readJson(args.baseInput);
-    const colorsRaw = readJson(args.colorsInput);
-    const basePalettes = transformTokens(baseRaw);
-    const colors = transformTokens(colorsRaw);
+    const basePalettes = transformTokens(readJson(args.baseInput));
+    const colors = transformTokens(readJson(args.colorsInput));
 
     writeFile(args.baseOutput, generateBaseTypeScript(basePalettes));
     writeFile(args.colorsOutput, generateColorsTypeScript(colors));
@@ -375,9 +341,7 @@ function main() {
     args.positional[1] ?? "src/constants/colors.ts"
   );
 
-  const raw = readJson(inputPath);
-  const colors = transformTokens(raw);
-  writeFile(outputPath, generateColorsTypeScript(colors));
+  writeFile(outputPath, generateColorsTypeScript(transformTokens(readJson(inputPath))));
 }
 
 main();

@@ -116,7 +116,7 @@
     },
     "danger": {
       "$type": "color",
-      "$value": "{blood_orange.500}"
+      "$value": "{blood_orange.600}"
     },
     "warning": {
       "$type": "color",

@@ -41,7 +41,7 @@ export const colors = {
   icon: {
     primary: brand[900],
     success: lime_green[500],
-    danger: blood_orange[500],
+    danger: blood_orange[600],
     warning: pale_yellow[500],
     muted: neutral[100],
     hint: neutral[200],

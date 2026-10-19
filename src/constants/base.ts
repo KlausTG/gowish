@@ -13,7 +13,7 @@ const brand = {
 } as const;
 
 const neutral = {
-  0: "white",
+  0: "#FFFFFF",
   50: "#FFFFFF",
   100: "#FFFFFF",
   200: "#FFFFFF",
@@ -25,7 +25,7 @@ const neutral = {
   800: "#FFFFFF",
   900: "#FFFFFF",
   950: "#FFFFFF",
-  1000: "black",
+  1000: "#FFFFFF",
 } as const;
 
 const blood_orange = {
